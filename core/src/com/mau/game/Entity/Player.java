@@ -3,62 +3,79 @@ package com.mau.game.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.mau.game.SpaceInvaders;
+
 
 public class Player extends Entity{
-    public enum state { SHOOTING, IDLE }
+    public enum STATE { IDLE, SHOOTING }
+    private enum DIR { LEFT, RIGHT, STOP }
 
-    private final int PLAYER_SPEED = 200;
+    private final int playerSpeed = 300;
+    public static STATE playerState;
 
-    public state playerState;
-
-    public Bullet bullet;
-
-    private Vector2 bulletPos;
+    public static Bullet bullet;
 
 
-    public Player(Texture texture, Texture bulletTex, Rectangle rect) {
-        super(texture, new Vector2((float) Gdx.graphics.getWidth() / 2, 0), rect);
 
-        bulletPos = new Vector2(0, -20);
-        bullet = new Bullet(bulletTex, bulletPos, new Rectangle(0, -20, 12, 12), this);
+    public Player(Texture texture, Vector2 position, Vector2 direction) {
+        super(texture, position, direction);
+        playerState = STATE.IDLE;
+        bullet = new Bullet(
+                SpaceInvaders.bulletTex,
+                new Vector2(position.x + 7, -20),
+                new Vector2(0, 0));
     }
 
     @Override
-    public void Draw(SpriteBatch batch) {
-        ProcessInput();
-//        sprite.setPosition(position.x, position.y);
-//        sprite.draw(batch);
+    public void draw(SpriteBatch batch) {
+        super.draw(batch);
 
-        batch.draw(tex, rect.x, rect.y, rect.width, rect.height);
-
-        bullet.Draw(batch);
+        bullet.draw(batch);
     }
 
-    public void ProcessInput() {
 
-        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-            Gdx.app.exit();
-            System.exit(0);
+    @Override
+    public void update() {
+
+        if (Gdx.input.isKeyPressed(Input.Keys.A)
+                && position.x > 2) {
+
+            move(DIR.LEFT);
+        } else if (Gdx.input.isKeyPressed(Input.Keys.D)
+                && position.x < (798 - texture.getWidth())) {
+
+            move(DIR.RIGHT);
+        } else  {
+            move(DIR.STOP);
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
-            rect.x -= PLAYER_SPEED * Gdx.graphics.getDeltaTime();
 
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
-            rect.x += PLAYER_SPEED * Gdx.graphics.getDeltaTime();
 
-        if (rect.x < 0) { rect.x = 0; }
-        if (rect.x > 800-27) { rect.x = 800-27; }
+        // SHOOT
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
+                && playerState != STATE.SHOOTING) {
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) &&
-                playerState != state.SHOOTING) {
-
-            bullet.rect.x = rect.x + 7;
-            bullet.rect.y = 0;
-            playerState = state.SHOOTING;
+            shoot();
         }
+
+        bullet.update();
+        position.add(direction);
+    }
+
+    private void move(DIR d) {
+        if (d == DIR.LEFT) {
+            setDirection(-playerSpeed, 0);
+        } else if (d == DIR.RIGHT) {
+            setDirection(playerSpeed, 0);
+        } else {
+            setDirection(0, 0);
+        }
+    }
+
+    private void shoot() {
+        playerState = STATE.SHOOTING;
+        bullet.setPosition(position.x + 7, position.y + 10);
+        bullet.setDirection(0, bullet.bulletSpeed);
     }
 }

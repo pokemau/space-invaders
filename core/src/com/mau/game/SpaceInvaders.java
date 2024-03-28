@@ -21,9 +21,9 @@ public class SpaceInvaders extends ApplicationAdapter {
 
 	SpriteBatch batch;
 
-	Texture playerTex;
-	Texture alienTex;
-	Texture bulletTex;
+	public static Texture playerTex;
+	public static Texture alienTex;
+	public static Texture bulletTex;
 
 	Player player;
 
@@ -42,41 +42,13 @@ public class SpaceInvaders extends ApplicationAdapter {
 		playerTex = new Texture("PlayerSprite.png");
 		bulletTex = new Texture("bullet.png");
 
+
 		player = new Player(
 				playerTex,
-				bulletTex,
-				new Rectangle((float) Gdx.graphics.getWidth() / 2, 0,
-			26, 26));
+				new Vector2((float)Gdx.graphics.getWidth()/2, 10),
+				new Vector2(0, 0));
 
-		aliens = new ArrayList<>();
-
-		generateAliens();
 	}
-
-	private void generateAliens() {
-
-		Vector2 alienPos = new Vector2(((float) Gdx.graphics.getWidth() / 2) - (27*5), 450);
-
-		for (int i = 0; i < 10; i++) {
-
-			for (int j = 0; j < 5; j++) {
-				aliens.add(new Alien(
-						alienTex,
-						new Vector2(alienPos.x, alienPos.y),
-						new Rectangle(alienPos.x, alienPos.y, 22, 22)));
-
-				alienPos.y -= 30;
-			}
-			alienPos.x += 30;
-			alienPos.y = 450;
-		}
-	}
-
-
-	/*
-	 * at start of game, create 10x5 grid of aliens in a grid
-	 *
-	 */
 
 	@Override
 	public void render () {
@@ -87,28 +59,15 @@ public class SpaceInvaders extends ApplicationAdapter {
 		batch.setProjectionMatrix(camera.combined);
 
 		batch.begin();
+		/////////////////////// DRAW ///////////////////////
 
-		for (Alien a : aliens) {
-			a.Draw(batch);
-		}
+		player.draw(batch);
 
-		player.Draw(batch);
 
+		/////////////////////// DRAW ///////////////////////
 		batch.end();
 
-
-		Iterator<Alien> iter = aliens.iterator();
-
-		while (iter.hasNext()) {
-			Rectangle alien = iter.next().rect;
-
-			if (alien.overlaps(player.bullet.rect)) {
-				player.playerState = Player.state.IDLE;
-				iter.remove();
-				break;
-			}
-		}
-
+		player.update();
 	}
 	
 	@Override

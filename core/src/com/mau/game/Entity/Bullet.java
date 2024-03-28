@@ -7,31 +7,28 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Bullet extends Entity{
-    Player player;
-    private final int BULLET_SPEED = 400;
 
-    public Bullet(Texture texture, Vector2 position, Rectangle rect, Player player) {
-        super(texture, position, rect);
-        this.player = player;
+    public final int bulletSpeed = 500;
+
+
+    public Bullet(Texture texture, Vector2 position, Vector2 direction) {
+        super(texture, position, direction);
     }
 
     @Override
-    public void Draw(SpriteBatch batch) {
-        float deltaTime = Gdx.graphics.getDeltaTime();
+    public void update() {
 
-//        sprite.setPosition(position.x, position.y);
-//        sprite.draw(batch);
-
-        batch.draw(tex, rect.x, rect.y);
-
-        if (player.playerState == Player.state.SHOOTING) {
-            rect.y += deltaTime * BULLET_SPEED;
-        } else if (player.playerState == Player.state.IDLE) {
-            rect.y = -20;
+        if (position.y > 498) {
+            Player.playerState = Player.STATE.IDLE;
+            setDirection(0, 0);
         }
 
-        if (rect.y >= 500)
-            player.playerState = Player.state.IDLE;
+        position.add( direction );
 
+    }
+
+    public void setPosition(float x, float y) {
+        position.x = x;
+        position.y = y;
     }
 }

@@ -10,7 +10,6 @@ import com.mau.game.SpaceInvaders;
 
 public class Player extends Entity{
     public enum STATE { IDLE, SHOOTING }
-    private enum DIR { LEFT, RIGHT, STOP }
 
     private final int playerSpeed = 300;
     public static STATE playerState;
@@ -40,11 +39,11 @@ public class Player extends Entity{
     public void update() {
 
         if (Gdx.input.isKeyPressed(Input.Keys.A)
-                && position.x > 2) {
+                && position.x > 4) {
 
             move(DIR.LEFT);
         } else if (Gdx.input.isKeyPressed(Input.Keys.D)
-                && position.x < (798 - texture.getWidth())) {
+                && position.x < (797 - texture.getWidth())) {
 
             move(DIR.RIGHT);
         } else  {

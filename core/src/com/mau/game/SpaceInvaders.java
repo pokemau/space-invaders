@@ -20,16 +20,15 @@ public class SpaceInvaders extends ApplicationAdapter {
 	final int SCR_H = 500;
 
 	SpriteBatch batch;
+	OrthographicCamera camera;
 
 	public static Texture playerTex;
 	public static Texture alienTex;
 	public static Texture bulletTex;
 
 	Player player;
+	Alien alien;
 
-	OrthographicCamera camera;
-
-	ArrayList<Alien> aliens;
 
 	@Override
 	public void create () {
@@ -48,6 +47,10 @@ public class SpaceInvaders extends ApplicationAdapter {
 				new Vector2((float)Gdx.graphics.getWidth()/2, 10),
 				new Vector2(0, 0));
 
+		alien = new Alien(
+				alienTex,
+				new Vector2((float)Gdx.graphics.getWidth()/2, 450),
+				new Vector2(0, 0));
 	}
 
 	@Override
@@ -62,12 +65,14 @@ public class SpaceInvaders extends ApplicationAdapter {
 		/////////////////////// DRAW ///////////////////////
 
 		player.draw(batch);
+		alien.draw(batch);
 
 
 		/////////////////////// DRAW ///////////////////////
 		batch.end();
 
 		player.update();
+		alien.update();
 	}
 	
 	@Override
